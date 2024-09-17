@@ -131,8 +131,10 @@ public class UserController {
     }
 
     @GetMapping("/admin/confirm-user")
-    public String confirmUserPage(Model model) {
+    public String confirmUserPage(Model model,HttpSession session) {
+        Long userId = (Long)session.getAttribute("userId");
         List<User> users = userService.getAllUsers();
+        users.removeIf(user -> user.getId().equals(userId));
         model.addAttribute("users",users);
         return "admin-confirm-user";
     }
@@ -172,7 +174,6 @@ public class UserController {
 
         return "redirect:/admin/departments";
     }
-
     @GetMapping("/admin/users")
     public String UsersPage(Model model) {
         List<User> users = userService.getAllUsers();
@@ -187,41 +188,6 @@ public class UserController {
 
         return "redirect:/admin/users";
     }
-
-
-
-
-
-    @GetMapping("/allusers")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        User user = userService.getUserByEmail(email);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/student/profile")
     public String showStudentPanel(Model model, HttpSession session) {
         Long userId = (Long)session.getAttribute("userId");

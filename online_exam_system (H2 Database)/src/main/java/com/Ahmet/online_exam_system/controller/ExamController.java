@@ -243,12 +243,12 @@ public class ExamController {
         User userdata = userRepository.findById(userId).orElse(null);
         if (userdata == null) {
             System.out.println("User not found for ID: " + userId);
-            return "error"; //
+            return "error";
         }
         exam.setUser(userdata);
         examService.saveExam(exam);
         session.setAttribute("examId", exam.getId());
-        return "redirect:soruekle"; //
+        return "redirect:soruekle";
     }
 
     @GetMapping("/teacher-view-exams")
@@ -257,7 +257,7 @@ public class ExamController {
         List<Exam> exams = examRepository.findByUserId(userId);
         exams.sort(Comparator.comparing(Exam::getStartDateTime));
         model.addAttribute("exam", exams);
-        return "teacher-view-exams"; //
+        return "teacher-view-exams";
     }
 
     @PostMapping("/teacher-view-exams")
@@ -337,7 +337,7 @@ public class ExamController {
             examParticipationRepository.findByUserIdAndExamId(studentId,examId);
 
             model.addAttribute("totalPoints", totalPoints);
-            System.out.println("Total Points: " + totalPoints); // Debug amacıyla
+            System.out.println("Total Points: " + totalPoints);
 
         }
         ExamParticipation exam = examParticipationRepository.findByUserIdAndExamId(studentId,examId);
@@ -397,6 +397,28 @@ public class ExamController {
         examService.saveExam(existingExam);
         session.setAttribute("examId", existingExam.getId());
         return "redirect:/teacher-view-exams";
+    }
+
+    @GetMapping("/soruekle")
+    public String createQuestion (Model model) {
+        model.addAttribute("question",new Question());
+        return "soruekle";
+    }
+
+    @PostMapping("/soruekle")
+    public String submitQuestions(@RequestBody List<Question> questions, HttpSession session) {
+        Long examId = (Long) session.getAttribute("examId");
+        Exam examData = examRepository.findById(examId).orElse(null);
+
+        if (examData != null) {
+            for (Question question : questions) {
+                question.setExam(examData);
+                questionService.saveQuestion(question);
+            }
+            return "redirect:/teacher/profile";
+        } else {
+            return "redirect:/error";
+        }
     }
 
 
