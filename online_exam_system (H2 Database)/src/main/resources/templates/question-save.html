@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>[[${pageTitle}]]</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+
+            background: white;
+            border-radius: 8px;
+            margin-left: 460px;
+            margin-top: 100px;
+            padding: 20px;
+
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group input[type="radio"] {
+            margin-right: 8px;
+        }
+        .form-group div {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar-custom {
+            background-color: #1c1c1c;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: white;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #e0e0e0;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .profile-img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            background-color: #343a40;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            height: calc(100vh - 56px);
+            z-index: 900;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 15px;
+            text-align: left;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #575d63;
+            text-decoration: none;
+        }
+
+        .sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            white-space: normal; /* Metinlerin alt satıra geçmesini sağlar */
+            transition: background-color 0.3s, padding-left 0.3s; /* Geçiş efekti */
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #575d63;
+            padding-left: 25px; /* Üzerine gelindiğinde sola kaydırma efekti */
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .sidebar .nav-link.profile-active {
+
+            color: #007bff;; /* Yazı rengi */
+            font-weight: bold; /* Yazı kalınlığı */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Hafif gölge efekti */
+        }
+
+        .main-content {
+            margin-left: 200px;
+            margin-top: 56px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .card img {
+            width: 212px;
+            height: 212px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Öğretmen Paneli</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item profile-container">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Profile" class="profile-img" onclick="toggleDropdown()">
+                    <div class="dropdown-menu" id="profileDropdown">
+                        <a href="#" onclick="confirmLogout()">Çıkış Yap</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<nav class="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link "  href="javascript:void(0);"  onclick="redirectToViewProfile()">
+                <i class="bi bi-person"></i>
+                Profil
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link "  href="javascript:void(0);"  onclick="redirectToCreateExam()">
+                <i class="bi bi-plus-circle"></i>
+                Sınav Oluştur
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link profile-active"  href="javascript:void(0);"  onclick="redirectToViewExam()">
+                <i class="bi bi-eye"></i>
+                Sınavları Görüntüle
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"  href="javascript:void(0);"  onclick="redirectToTeacherViewStudentsExams()">
+                <i class="bi bi-eye"></i>
+                Klasik Soruları Puanla
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"  href="javascript:void(0);"  onclick="redirectToViewResults()">
+                <i class="bi bi-bar-chart"></i>
+                Sınav Sonuçlarını Görüntüle
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0);" onclick="confirmLogout()">
+                <i class="bi bi-door-open"></i>
+                Çıkış Yap
+            </a>
+        </li>
+    </ul>
+</nav>
+<div class="container">
+    <h2>[[${pageTitle}]]</h2>
+    <form id="questionForm" th:action="@{/question/save}" method="post" th:object="${question}">
+        <input type="hidden" name="questionId" th:field="${question.id}">
+        <div id="questionsContainer" class="form-group">
+            <label for="questionText">Soru:</label>
+            <input type="text" id="questionText" name="questionText" th:field="*{questionText}" required>
+
+            <label for="questionType">Soru Tipi:</label>
+            <select id="questionType" name="questionType" th:field="*{questionType}" onchange="updateQuestionType()" required>
+                <option value="coktan_secme">Çoktan Seçmeli</option>
+                <option value="klasik">Klasik</option>
+                <option value="dogru_yanlis">Doğru/Yanlış</option>
+            </select>
+
+            <div id="optionsContainer"></div>
+
+            <label for="points">Puan:</label>
+            <input type="number" id="points" name="points" th:field="*{points}" required>
+        </div>
+        <button type="submit" onclick="updateValue()">Soruyu Ekle</button>
+    </form>
+</div>
+
+<script>
+    function updateQuestionType() {
+        const questionType = document.getElementById('questionType').value;
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+
+        if (questionType === 'coktan_secme') {
+            optionsContainer.innerHTML = `
+                <label>Seçenekler:</label>
+                <div>
+                    <input type="radio" id="correctAnswer1" name="correctAnswer" value="option1" required>
+                    <input type="text" id="option1" name="option1">
+                </div>
+                <div>
+                    <input type="radio" id="correctAnswer2" name="correctAnswer" value="option2" required>
+                    <input type="text" id="option2" name="option2">
+                </div>
+                <div>
+                    <input type="radio" id="correctAnswer3" name="correctAnswer" value="option3" required>
+                    <input type="text" id="option3" name="option3">
+                </div>
+                <div>
+                    <input type="radio" id="correctAnswer4" name="correctAnswer" value="option4" required>
+                    <input type="text" id="option4" name="option4">
+                </div>
+                <div>
+                    <input type="radio" id="correctAnswer5" name="correctAnswer" value="option5" required>
+                    <input type="text" id="option5" name="option5">
+                </div>
+            `;
+        } else if (questionType === 'klasik') {
+            optionsContainer.innerHTML = `
+                <label for="correctAnswer">Doğru Cevap:</label>
+                <input type="text" id="correctAnswer" name="correctAnswer" required>
+            `;
+        } else if (questionType === 'dogru_yanlis') {
+            optionsContainer.innerHTML = `
+                <label for="correctAnswer">Doğru Cevap:</label>
+                <select id="correctAnswer" name="correctAnswer" required>
+                    <option value="dogru">Doğru</option>
+                    <option value="yanlis">Yanlış</option>
+                </select>
+            `;
+        }
+    }
+    function updateValue() {
+        const correctAnswerRadio = document.querySelector('input[name="correctAnswer"]:checked');
+        if (correctAnswerRadio) {
+            correctAnswerRadio.value = document.getElementById(correctAnswerRadio.id.replace('correctAnswer', 'option')).value;
+            alert(correctAnswerRadio.value);
+        }
+    }
+    function toggleDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('show');
+    }
+
+    function confirmLogout() {
+        if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+            window.location.href = '/logout';
+        }
+    }
+    function redirectToViewProfile() {
+        window.location.href = "/teacher/profile";
+    }
+
+    function redirectToCreateExam() {
+        window.location.href = "/create-exam";
+    }
+
+    function redirectToViewExam() {
+        window.location.href = "/teacher-view-exams";
+    }
+
+    function redirectToViewResults() {
+        window.location.href = "/teacher-view-results";
+    }
+    function redirectToTeacherViewStudentsExams() {
+        window.location.href = "/teacher/view/students/exams";
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateQuestionType();
+    });
+</script>
+</body>
+</html>

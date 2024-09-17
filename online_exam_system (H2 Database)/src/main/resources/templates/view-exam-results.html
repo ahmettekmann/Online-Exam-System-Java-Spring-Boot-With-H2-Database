@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sınav Listesi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body {
+
+      font-family: 'Roboto', sans-serif;
+      background-color: #e0e0e0;
+      padding: 0;
+      margin: 0;
+    }
+
+    .navbar-custom {
+      background-color: #1c1c1c;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .navbar-custom .navbar-brand,
+    .navbar-custom .nav-link {
+      color: white;
+    }
+
+    .navbar-custom .nav-link:hover {
+      color: #e0e0e0;
+    }
+
+    .profile-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .profile-img {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid white; /* Daire çerçeve ekler */
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Hafif bir gölge ekler */
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f8f9fa;
+    }
+
+
+    .sidebar {
+      width: 200px;
+      background-color: #343a40;
+      position: fixed;
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      height: calc(100vh - 56px);
+      z-index: 900;
+    }
+
+    .sidebar a {
+      color: white;
+      padding: 15px;
+      text-align: left;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar a:hover {
+      background-color: #575d63;
+      text-decoration: none;
+    }
+
+    .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      color: white;
+      text-decoration: none;
+      white-space: normal; /* Metinlerin alt satıra geçmesini sağlar */
+      transition: background-color 0.3s, padding-left 0.3s; /* Geçiş efekti */
+    }
+
+    .sidebar .nav-link:hover {
+      background-color: #575d63;
+      padding-left: 25px; /* Üzerine gelindiğinde sola kaydırma efekti */
+    }
+    .sidebar .nav-link i {
+      margin-right: 10px;
+    }
+
+    .main-content {
+      margin-left: 200px;
+      margin-top: 56px;
+      padding: 20px;
+      background: linear-gradient(to right, #e3f2fd, #bbdefb);
+    }
+
+    .sidebar .nav-link.profile-active {
+
+      color: #007bff;; /* Yazı rengi */
+      font-weight: bold; /* Yazı kalınlığı */
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Hafif gölge efekti */
+    }
+    .header {
+      text-align: center;
+      margin: 30px 0;
+      color: #0d6efd;
+      font-weight: bold;
+      font-size: 2rem;
+      word-wrap: break-word;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-custom {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-custom:hover {
+      background-color: #0056b3;
+    }
+
+    .table {
+      background-color: #ffffff;
+      border-radius: 8px;
+      margin: 0 auto;
+      width: 90%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .table th {
+      background-color: #0d6efd;
+      color: white;
+      padding: 15px;
+      border: none;
+      text-align: center;
+      font-weight: bold; /* Başlıkları kalın yapar */
+      font-size: 16px; /* Başlık yazı boyutunu artırır */
+    }
+
+    .table tbody tr:hover {
+      background-color: #e3f2fd; /* Satırın üzerine gelindiğinde arka plan rengini değiştirir */
+    }
+
+
+
+    .table td {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px; /* Yazı boyutunu artırır */
+      color: #212529; /* Yazı rengini koyulaştırır */
+      font-weight: 600; /* Yazıyı kalın yapar */
+    }
+    .table td, .table th {
+      border: 1px solid #dee2e6; /* Hücreler arasında ince bir sınır ekler */
+    }
+    .table img {
+      width: 50px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .btn {
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0b5ed7;
+    }
+
+    .btn.disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .container {
+      margin-left: 220px;
+      margin-top: 80px; /* Navbar için boşluk bırak */
+      width: calc(100% - 240px);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Öğrenci Paneli</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item profile-container">
+          <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Profile" class="profile-img" onclick="toggleDropdown()">
+          <div class="dropdown-menu" id="profileDropdown">
+            <a href="#" onclick="confirmLogout()">Çıkış Yap</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<nav class="sidebar">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0);"  onclick="redirectToViewProfile()">
+        <i class="bi bi-person"></i>
+        Profil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0);"  onclick="redirectToViewExams()">
+        <i class="bi bi-eye"></i>
+        Aktif Sınavları Görüntüle
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link profile-active" href="javascript:void(0);"  onclick="redirectToViewExamResults()">
+        <i class="bi bi-bar-chart"></i>
+        Sonuçları Görüntüle
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0);" onclick="confirmLogout()">
+        <i class="bi bi-door-open"></i>
+        Çıkış Yap
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
+<div class="container">
+  <div class="header">Sınav Sonuçlarım</div>
+<form id="view-exam-results" method="GET" action="/view-exam-results">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+      <tr>
+        <th>Sınavın Adı</th>
+        <th>Puan</th>
+        <th>Cevapları Gör</th>
+      </tr>
+      </thead>
+      <tbody id="ExamTableBody">
+      <tr th:each="result : ${examResults}" th:if="${result.isActive == 'No'}">
+        <td th:text="${result.examName}"></td>
+        <td th:text="${result.points}"></td>
+        <td> <a href="#" class="btn btn-primary" th:href="@{/view-answers(examId=${result.examId}, userId=${result.userId})}">Cevapları Gör</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleDropdown() {
+    document.getElementById('profileDropdown').classList.toggle('show');
+  }
+
+  function confirmLogout() {
+    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+      window.location.href = '/logout';
+    }
+  }
+  function redirectToViewProfile(){
+    window.location.href = "/student/profile";
+  }
+
+  function redirectToViewExams(){
+    window.location.href = "/view-exams";
+  }
+  function redirectToViewExamResults(){
+    window.location.href = "/view-exam-results";
+  }
+</script>
+
+</body>
+</html>

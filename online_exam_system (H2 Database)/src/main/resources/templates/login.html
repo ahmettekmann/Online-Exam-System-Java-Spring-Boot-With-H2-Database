@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    p {
+      color: red;
+      font-size: 0.775rem;
+    }
+    body {
+
+
+      font-family: 'Roboto', sans-serif;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      width: 100%;
+      max-width: 800px;
+    }
+    .login-image {
+      flex: 1;
+      background: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp') no-repeat center center;
+      background-size: cover;
+      border-radius: 8px 0 0 8px;
+    }
+    .login-form {
+      flex: 1;
+      padding: 2rem;
+    }
+    .login-title {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: #007bff;
+    }
+    .form-control {
+      margin-bottom: 1rem;
+    }
+    .btn-login {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+    .forgot-password {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+     .register {
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+
+  <div class="login-image"></div>
+  <div class="login-form">
+    <p>Yeni kullanıcı kayıtları admin sayfası üzerinden onaylanır. Admin hesabı için mail:ahmet@outlook.com şfire:123</p>
+    <p>Kayıtlı öğretmen için mail:ardatekman38@gmail.com şifre:123</p>
+    <p> Kayıtlı öğrenci için mail:ahmet7582@outlook.com şifre:123</p>
+
+    <div class="login-title">Giriş Yap</div>
+    <form th:action="@{/login}" th:object="${user}"  method="post">
+      <div class="mb-3">
+        <label for="email" class="form-label">E-posta</label>
+        <input type="email" class="form-control" id="email" name="email" th:field="*{email}" placeholder="E-posta Adresinizi Giriniz" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Şifre</label>
+        <input type="password" class="form-control" id="password" name="password" th:field="*{password}" placeholder="Şifrenizi Giriniz" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-login">Giriş Yap</button>
+      <div th:if="${error}" style="color: red; font-weight: bold; margin-bottom: 1rem;">
+        <span th:text="${error}"></span>
+      </div>
+
+      <div class="forgot-password">
+        <a href="#">Şifrenizi mi unuttunuz?</a>
+      </div>
+      <div class="forgot-password">
+        <a href="register">Kayıt Ol</a>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

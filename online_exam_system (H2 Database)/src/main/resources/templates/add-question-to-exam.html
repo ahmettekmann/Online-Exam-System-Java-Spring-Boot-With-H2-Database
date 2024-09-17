@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Soru Düzenle</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background: #f4f7f9;
+      font-family: 'Roboto', sans-serif;
+      color: #333;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      width: 80%;
+      margin: 30px auto;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group select,
+    .form-group textarea {
+      width: calc(100% - 16px); /* Adjust width for padding */
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+    .form-group input[type="radio"] {
+      margin-right: 5px;
+    }
+    .form-group div {
+      margin-bottom: 10px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Soru Düzenle</h2>
+  <form id="questionForm" th:action="@{/add-question-to-exam}" method="post">
+    <input type="hidden" name="id" th:field="*{question.id}"/>
+
+    <div class="form-group">
+      <label for="questionText">Soru:</label>
+      <input type="text" id="questionText" th:field="*{question.questionText}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="questionType">Soru Tipi:</label>
+      <select id="questionType" th:field="*{question.questionType}" onchange="updateFormFields()" required>
+        <option value="coktan_secme" th:selected="${question.questionType == 'coktan_secme'}">Çoktan Seçmeli</option>
+        <option value="klasik" th:selected="${question.questionType == 'klasik'}">Klasik</option>
+        <option value="dogru_yanlis" th:selected="${question.questionType == 'dogru_yanlis'}">Doğru/Yanlış</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="optionsDiv" style="display:none;">
+      <label>Seçenekler:</label>
+      <div id="optionsContainer">
+        <div>
+          <input type="radio" id="correctAnswer-option1" name="correctAnswer" value="option1">
+          <input type="text" id="option1" name="option1" th:field="*{question.option1}">
+        </div>
+        <div>
+          <input type="radio" id="correctAnswer-option2" name="correctAnswer" value="option2">
+          <input type="text" id="option2" name="option2" th:field="*{question.option2}">
+        </div>
+        <div>
+          <input type="radio" id="correctAnswer-option3" name="correctAnswer" value="option3">
+          <input type="text" id="option3" name="option3" th:field="*{question.option3}">
+        </div>
+        <div>
+          <input type="radio" id="correctAnswer-option4" name="correctAnswer" value="option4">
+          <input type="text" id="option4" name="option4" th:field="*{question.option4}">
+        </div>
+        <div>
+          <input type="radio" id="correctAnswer-option5" name="correctAnswer" value="option5">
+          <input type="text" id="option5" name="option5" th:field="*{question.option5}">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group" id="klasikDiv" style="display:none;">
+      <label for="correctAnswer-klasik">Doğru Cevap:</label>
+      <input type="text" id="correctAnswer-klasik" name="correctAnswer">
+    </div>
+
+    <div class="form-group" id="dogruYanlisDiv" style="display:none;">
+      <label>Doğru Cevap:</label>
+      <div>
+        <input type="radio" id="correctAnswer-dogru" name="correctAnswer" value="dogru">
+        <label for="correctAnswer-dogru">Doğru</label>
+      </div>
+      <div>
+        <input type="radio" id="correctAnswer-yanlis" name="correctAnswer" value="yanlis">
+        <label for="correctAnswer-yanlis">Yanlış</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="points">Puan:</label>
+      <input type="number" id="points" th:field="*{question.points}" required>
+    </div>
+
+    <button type="submit" class="btn">Kaydet</button>
+  </form>
+</div>
+
+<script>
+  function updateFormFields() {
+    const questionType = document.getElementById('questionType').value;
+    const optionsDiv = document.getElementById('optionsDiv');
+    const klasikDiv = document.getElementById('klasikDiv');
+    const dogruYanlisDiv = document.getElementById('dogruYanlisDiv');
+
+    if (questionType === 'coktan_secme') {
+      optionsDiv.style.display = 'block';
+      klasikDiv.style.display = 'none';
+      dogruYanlisDiv.style.display = 'none';
+    } else if (questionType === 'klasik') {
+      optionsDiv.style.display = 'none';
+      klasikDiv.style.display = 'block';
+      dogruYanlisDiv.style.display = 'none';
+    } else if (questionType === 'dogru_yanlis') {
+      optionsDiv.style.display = 'none';
+      klasikDiv.style.display = 'none';
+      dogruYanlisDiv.style.display = 'block';
+    } else {
+      optionsDiv.style.display = 'none';
+      klasikDiv.style.display = 'none';
+      dogruYanlisDiv.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateFormFields();
+  });
+</script>
+</body>
+</html>

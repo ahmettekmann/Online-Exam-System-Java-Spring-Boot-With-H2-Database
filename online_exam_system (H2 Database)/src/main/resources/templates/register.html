@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .registration-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      width: 100%;
+      max-width: 1300px;
+    }
+    .registration-image {
+      flex: 1;
+      background: url('https://www.iitms.co.in/online-examination-system/assets/img/online%20exam%20banner%20image2.png') no-repeat center center;
+      background-size: cover;
+      border-radius: 8px 0 0 8px;
+    }
+    .registration-form {
+      flex: 1;
+      padding: 2rem;
+    }
+    .registration-title {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: #007bff;
+    }
+    .form-control {
+      margin-bottom: 1rem;
+    }
+    .form-control-name,
+    .form-control-surname {
+      margin-bottom: 1rem;
+      text-transform: capitalize; /* Capitalize the first letter */
+    }
+    .btn-register {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+  </style>
+  <script>
+    function toggleDepartmentField() {
+      var roleSelect = document.getElementById('role');
+      var departmentDiv = document.getElementById('departmentDiv');
+      var departmentSelect = document.getElementById('department');
+
+      if (roleSelect.value === 'STUDENT') {
+        departmentDiv.style.display = 'block';
+      } else {
+        departmentDiv.style.display = 'none';
+        departmentSelect.value = ''; // Seçili departmanı sıfırla
+        var departmentInput = document.getElementsByName('departmentId')[0];
+        if (departmentInput) {
+          departmentInput.remove(); // departmentId input alanını formdan kaldır
+        }
+      }
+    }
+
+    function prepareFormSubmission() {
+      var roleSelect = document.getElementById('role');
+      if (roleSelect.value !== 'STUDENT') {
+        var departmentInput = document.getElementsByName('departmentId')[0];
+        if (departmentInput) {
+          departmentInput.remove(); // departmentId input alanını formdan kaldır
+        }
+      }
+    }
+    function capitalizeFirstLetter(event) {
+      var input = event.target;
+      input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      toggleDepartmentField(); // Sayfa yüklendiğinde mevcut seçimi kontrol et
+      document.getElementById('role').addEventListener('change', toggleDepartmentField);
+      document.getElementById('userForm').addEventListener('submit', prepareFormSubmission);
+      document.getElementById('name').addEventListener('blur', capitalizeFirstLetter);
+      document.getElementById('surname').addEventListener('blur', capitalizeFirstLetter);
+    });
+  </script>
+</head>
+<body>
+<div class="registration-container">
+  <div class="registration-image"></div>
+  <div class="registration-form">
+    <div class="registration-title">Kayıt Ol</div>
+    <form th:action="@{/register}" th:object="${user}" method="post" enctype="multipart/form-data" id="userForm">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="name" class="form-label">İsim:</label>
+            <input type="text" class="form-control form-control-name" id="name" name="name" th:field="*{name}" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="surname" class="form-label">Soyisim:</label>
+            <input type="text" class="form-control form-control-surname" id="surname" name="surname" th:field="*{surname}" required>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="email" class="form-label">E-posta:</label>
+            <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="number" class="form-label">Okul Numarası:</label>
+            <input type="text" class="form-control" id="number" name="number" th:field="*{number}" required>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="password" class="form-label">Şifre:</label>
+            <input type="password" class="form-control" id="password" name="password" th:field="*{password}" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="role" class="form-label">Rol Seçin:</label>
+            <select class="form-select" id="role" name="role" th:field="*{role}" required>
+              <option value="STUDENT">Öğrenci</option>
+              <option value="TEACHER">Öğretmen</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="departmentDiv" class="mb-3" style="display:none;">
+        <label for="department" class="form-label">Bölüm:</label>
+        <select class="form-select" id="department" name="departmentId" th:field="*{department.id}">
+          <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-register">Kayıt Ol</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
